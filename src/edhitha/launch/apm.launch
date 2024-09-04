@@ -1,0 +1,25 @@
+<launch>
+    <!-- Node to extrapolate IMU and GPS data -->
+    <node name="extrapolate_node" type="extrapolate_node" pkg="edhitha" output="screen">
+        <param name="use_sim_time" value="true"/>
+    </node>
+
+    <!-- Node for robot localization -->
+    <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization_node" output="screen">
+        <rosparam command="load" file="$(find gps)/config/ekf.yaml" />
+    </node>
+
+    <!-- MAVROS node to communicate with FCU -->
+    <node pkg="mavros" type="mavros_node" name="mavros" output="screen">
+        <!-- Updated fcu_url with the correct UDP ports -->
+        <param name="fcu_url" value="udp://192.168.160.108:14551@14550" />
+        <param name="gcs_url" value="" />
+        <param name="target_system_id" value="1" />
+        <param name="target_component_id" value="1" />
+        <param name="system_id" value="1" />
+        <param name="component_id" value="240" />
+        <param name="log_output" value="screen" />
+        <param name="plugin_blacklist" value="safety_area" />
+        <param name="plugin_whitelist" value="" />
+    </node>
+</launch>
